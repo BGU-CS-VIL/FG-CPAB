@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FG-CPAB: Factorized Gradients for Scalable Parametric Diffeomorphisms</title>
+  <meta name="description" content="FG-CPAB (NeurIPS 2026): factorized gradients make fine-tessellation CPAB diffeomorphisms practical. Interactive WebGPU demos run the method in your browser.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f5bd3'/%3E%3Cpath d='M6 24 L16 6 L26 24 Z M6 24 L16 15 L26 24 M16 6 L16 15' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="topbar">
+    <span class="brand">
+      <img class="logo logo-bgu" src="assets/bgu-logo.svg" alt="">
+      <span>Ben-Gurion University<br>of the Negev</span>
+    </span>
+    <img class="logo logo-neurips" src="assets/neurips-2026-logo.svg" alt="NeurIPS 2026">
+  </div>
+
+  <header class="masthead">
+    <h1>Factorized Gradients for Scalable<br>Highly-expressive Parametric Diffeomorphisms</h1>
+    <p class="authors">
+      <span><a href="https://amitt1236.github.io">Amit Aflalo</a><sup>1</sup></span>
+      <span><a href="https://www.cs.bgu.ac.il/~erant/">Eran Treister</a><sup>1</sup></span>
+      <span><a href="https://chaimbaskin.bgu.ac.il">Chaim Baskin</a><sup>2</sup></span>
+      <span><a href="https://www.orenfreifeld.com">Oren Freifeld</a><sup>1</sup></span>
+    </p>
+    <p class="affiliations">
+      <span><sup>1</sup>The Stein Faculty of Computer and Information Science, Ben-Gurion University of the Negev</span>
+      <span><sup>2</sup>School of Electrical and Computer Engineering, Ben-Gurion University of the Negev</span>
+    </p>
+    <nav class="links">
+      <a class="pill" href="#">Paper</a>
+      <a class="pill" href="https://github.com/BGU-CS-VIL/FG-CPAB" target="_blank" rel="noopener">Code</a>
+      <a class="pill" href="#bibtex">BibTeX</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="prose">
+      <h2 class="hero-title">Abstract</h2>
+      <p>
+        Diffeomorphisms provide a flexible, topology-preserving mathematical tool for modeling complex
+        spatial deformations, and are used in various scientific fields. However, making these
+        deformations simultaneously highly expressive and computationally efficient remains challenging.
+        Continuous Piecewise-Affine Based (CPAB) transformations offer an attractive solution by
+        parameterizing a family of diffeomorphisms via continuous velocity fields that are piecewise
+        affine <em>w.r.t.</em> a chosen tessellation of the domain. Importantly, <span class="math">d = \dim(\theta)</span>,
+        the dimension of the parameter vector <span class="math">\theta</span>, depends on the fineness of the tessellation rather than
+        on the data resolution. Despite this compact parameterization, CPAB optimization has long been
+        hindered by the tight coupling between trajectory integration and computing gradients
+        <em>w.r.t.</em> <span class="math">\theta</span>. We introduce <strong>FG-CPAB</strong>, a factorized-gradient formulation for scalable
+        CPAB transformations. By separating integration from parameter-space projection, our method
+        reduces gradient computation complexity from <span class="math">\mathcal{O}(dTN)</span> to <span class="math">\mathcal{O}(TN + dC)</span>, where
+        <span class="math">T</span> is the number of integration steps, <span class="math">N</span> is the number of transformed points, and
+        <span class="math">C</span> is the number of tessellation cells. This reformulation yields speedups of up to four orders
+        of magnitude (e.g., <span class="math">\approx 10^4\times</span> in 2D), substantial memory savings (e.g., <span class="math">\approx 500\times</span>
+        reduction in peak GPU memory usage in 2D), and dramatically higher expressivity. This makes, for the
+        first time, fine-tessellation CPAB practical in 2D and 3D, enabling highly expressive parametric
+        diffeomorphisms.
+      </p>
+    </section>
+
+    <section class="highlights" aria-label="Key results">
+      <div><strong>up to 10<sup>4</sup>×</strong><span>faster gradients than the standard CPAB implementation (2D)</span></div>
+      <div><strong>500×</strong><span>lower peak GPU memory (2D)</span></div>
+      <div><strong>O(TN + dC)</strong><span>gradient cost, down from O(dTN)</span></div>
+    </section>
+
+    <section class="hero">
+      <h2 class="hero-title">Live demo: deform an image with a CPAB diffeomorphism</h2>
+      <div id="sculpt-demo" class="demo-mount"></div>
+      <p class="caption">
+        A CPAB diffeomorphism running live in your browser. Drag to add velocity to the tessellation
+        vertices; every frame integrates the continuous piecewise-affine velocity field for each pixel
+        on your GPU. The map stays smooth and invertible however hard you pull: move <em>t</em> below 0
+        to apply the exact inverse.
+      </p>
+    </section>
+
+    <section class="intro" id="diffeomorphisms">
+      <h2 class="hero-title">What are diffeomorphisms, and why are they useful?</h2>
+      <figure class="intro-cartoon">
+        <img src="assets/diffeomorphism-cartoon.svg" width="1186" height="310"
+          alt="A diffeomorphism is a differentiable, invertible deformation with a differentiable inverse. A grid that deforms smoothly and back is allowed; tearing it or folding it is not.">
+      </figure>
+      <div class="prose">
+        <p>
+          A <strong>diffeomorphism</strong> is a differentiable invertible deformation with a differentiable inverse.
+          Diffeomorphisms are <em>highly expressive</em>, bending and stretching space into rich,
+          complex shapes, and yet <em>well behaved</em>: they never tear or fold it, so neighbours stay neighbours
+          and nothing overlaps. That combination is rare, and it is exactly what registration, shape matching and
+          geometric warping need, where a tear or a fold would produce invalid correspondences.
+        </p>
+
+        <h3>Diffeomorphisms as flows</h3>
+        <p>
+          A convenient way to build a diffeomorphism is to pick a well-behaved velocity field <span class="math">\mathbf v</span> and
+          let every point flow along it for unit time. Under certain conditions, the resulting transformation is a diffeomorphism, and
+          flowing along <span class="math">-\mathbf v</span> inverts the deformation.
+        </p>
+        <p class="display-math">\dot{\mathbf p}^{(t)} = \mathbf v\big(\mathbf p^{(t)}\big), \qquad t \in [0, 1]</p>
+      </div>
+      <div class="figure-pair">
+        <figure>
+          <img src="assets/flow-velocity-field.svg" width="446" height="446"
+            alt="A swirling velocity field drawn as arrows, with one point's spiral trajectory along it.">
+          <figcaption>A velocity field and one point's trajectory along it, from ○ to ●.</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/flow-deformed-grid.svg" width="454" height="454"
+            alt="A regular grid after being carried by the flow: bent and swirled, but not torn or folded.">
+          <figcaption>Carrying a regular grid along the flow bends it, but never tears or folds it.</figcaption>
+        </figure>
+      </div>
+
+      <div class="prose">
+        <h3>CPAB: continuous piecewise-affine velocity fields</h3>
+        <p>
+          Flow-based methods often store the velocity on a dense grid, so the number of parameters grows with
+          the data resolution. CPAB transformations, introduced by
+          <a href="https://doi.org/10.1109/TPAMI.2016.2646685">Freifeld et al.</a>, instead tessellate the
+          domain into cells and give each cell <span class="math">c</span> an affine velocity field
+          <span class="math">\mathbf v_c = \mathbf A_c\tilde{\mathbf p}</span>, with
+          <span class="math">\mathbf A_c \in \mathbb R^{2\times 3}</span> and
+          <span class="math">\tilde{\mathbf p} = (p_x, p_y, 1)^\top</span>. The cell fields are tied to agree on
+          shared edges, so the whole field is continuous. That constraint is linear, so every valid field is
+          spanned by a fixed basis <span class="math">\mathbf B</span> and set by a parameter vector
+          <span class="math">\boldsymbol\theta \in \mathbb R^d</span>:
+        </p>
+        <p class="display-math">\operatorname{vec}\big(\{\mathbf A_c\}_{c=1}^{C}\big) = \mathbf B\boldsymbol\theta</p>
+      </div>
+      <div class="figure-pair figure-pair-cpab">
+        <figure>
+          <img src="assets/cpab-tessellation.jpg" width="1200" height="1200" loading="lazy"
+            alt="A photo of skydivers overlaid with a triangular tessellation: a 2 by 2 grid of squares, each split into four triangles.">
+          <figcaption>A triangular tessellation of the domain.</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/cpab-velocity-field.svg" width="599" height="500" loading="lazy"
+            alt="Streamlines of a continuous piecewise-affine velocity field on the same tessellation, coloured by velocity magnitude.">
+          <figcaption>A CPA velocity field on it: affine inside each triangle, continuous across edges.</figcaption>
+        </figure>
+      </div>
+      <div class="prose">
+        <p>
+          The size of <span class="math">\boldsymbol\theta</span> depends on how fine the tessellation is, not on
+          the data resolution. Finer tessellations give more expressive deformations, but computing gradients
+          <em>w.r.t.</em> <span class="math">\boldsymbol\theta</span> has made them impractically slow. FG-CPAB
+          removes that bottleneck.
+        </p>
+      </div>
+    </section>
+
+    <section class="prose" id="factorized-gradients">
+      <h2>Gradients through the factorization</h2>
+      <p>
+        The standard CPAB gradient carries the sensitivities of all <span class="math">d</span> parameters through all
+        <span class="math">T</span> integration steps of each of the <span class="math">N</span> points, at a cost of
+        <span class="math">\mathcal{O}(dTN)</span>, and <span class="math">d</span> grows with every refinement of the
+        tessellation. FG-CPAB factorizes it: integrate every point forward, run one adjoint sweep that accumulates a
+        small moment matrix per triangle, and recover the gradient of all <span class="math">d</span> parameters with a
+        single sparse projection, at a cost of <span class="math">\mathcal{O}(TN + dC)</span>:
+      </p>
+      <p class="display-math">\begin{gathered}
+        \mathbf{M}_c = \sum_{(n,t)\in\mathcal{I}_c} \Big[h\,\boldsymbol\lambda_n^{(t+1)}\tilde{\mathbf p}_{n,\mathrm{mid}}^{(t)\top} + \tfrac{h^2}{2}\,\big(\mathbf A_{c,\mathrm{lin}}^\top\boldsymbol\lambda_n^{(t+1)}\big)\,\tilde{\mathbf p}_n^{(t)\top}\Big], \\[6pt]
+        \nabla_{\boldsymbol\theta}\mathcal L = \mathbf B^\top \operatorname{vec}\big(\{\mathbf M_c\}_{c=1}^{C}\big).
+        \end{gathered}</p>
+      <figure class="benchmark">
+        <img src="assets/fgcpab-scaling-2d.svg" width="1404" height="552" loading="lazy"
+          alt="Three log-scale plots against tessellation size from 1 to 30. Forward latency, backward latency and peak GPU memory of libcpab rise steeply and stop at size 12, reaching 60, 10463 and 509 times those of FG-CPAB, whose curves stay nearly flat up to size 30.">
+        <figcaption>
+          Scaling with tessellation size in 2D (<span class="math">4N_\mathrm{tess}^2</span> triangles; RTX A6000,
+          125,000 points, batch of 16). The standard implementation, libcpab (red), slows down by orders of
+          magnitude as the tessellation is refined and cannot run beyond <span class="math">N_\mathrm{tess} = 12</span>.
+          FG-CPAB (blue) stays nearly flat all the way to <span class="math">N_\mathrm{tess} = 30</span>.
+        </figcaption>
+      </figure>
+      <p class="takeaway">
+        The result: up to <strong>10,463× faster gradients</strong> and <strong>509× less GPU memory</strong>, and
+        tessellations far finer than the standard implementation can handle. The demos below fit CPAB
+        transformations with exactly this gradient, live on your GPU.
+      </p>
+    </section>
+
+    <section class="prose">
+      <h3>Fitting point correspondences</h3>
+      <p>
+        A line grid is warped onto a target swirl by gradient descent on <span class="math">\theta</span>
+        (24×24 tessellation, <span class="math">d = 2{,}210</span>). The inverse comes for free:
+        <span class="math">\phi_\theta^{-1} = \phi_{-\theta}</span>, so negating <span class="math">\theta</span> maps the
+        warped grid back onto the source.
+      </p>
+    </section>
+
+    <section class="wide">
+      <div id="gridfit-demo" class="demo-mount"></div>
+    </section>
+
+    <section class="prose">
+      <h3>Registering densities</h3>
+      <p>
+        Here the loss compares colors instead of point positions: a source density is warped until it
+        matches a target density.
+      </p>
+    </section>
+
+    <section class="wide">
+      <div id="register-demo" class="demo-mount"></div>
+    </section>
+
+    <section class="prose" id="bibtex">
+      <h2>BibTeX</h2>
+      <pre class="bibtex"><code>@inproceedings{aflalo2026fgcpab,
+  title     = {Factorized Gradients for Scalable Highly-expressive Parametric Diffeomorphisms},
+  author    = {Aflalo, Amit and Treister, Eran and Baskin, Chaim and Freifeld, Oren},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2026}
+}</code></pre>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>The demos run the WebGPU port of the FG-CPAB CUDA kernels; it matches the CUDA implementation to float32 precision.</p>
+  </footer>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script type="module">
+    import { mountSculpt } from './demos/sculpt.js';
+    import { mountRegister } from './demos/register.js';
+    import { mountGridFit } from './demos/gridfit.js';
+    import { reportError } from './demos/common.js';
+
+    const demos = {
+      sculpt: mountSculpt(document.getElementById('sculpt-demo')),
+      register: mountRegister(document.getElementById('register-demo')),
+      gridfit: mountGridFit(document.getElementById('gridfit-demo')),
+    };
+    for (const mounted of Object.values(demos)) mounted.catch(reportError);
+    if (new URLSearchParams(location.search).has('debug')) window.__demos = demos;
+
+    function renderMath() {
+      if (!window.katex) return setTimeout(renderMath, 50);
+      for (const el of document.querySelectorAll('.math, .display-math')) {
+        window.katex.render(el.textContent, el, {
+          displayMode: el.classList.contains('display-math'), throwOnError: false,
+        });
+      }
+      // Measuring forces layout, which starts the KaTeX font loads; refit once they land.
+      fitMath();
+      document.fonts.ready.then(fitMath);
+      addEventListener('resize', fitMath);
+    }
+
+    // Shrink a display equation that is wider than its column, so it shows whole instead of scrolling.
+    function fitMath() {
+      for (const el of document.querySelectorAll('.display-math')) {
+        el.style.fontSize = '';
+        const ratio = el.clientWidth / el.scrollWidth;
+        if (ratio < 1) el.style.fontSize = `${Math.floor(ratio * 980) / 10}%`;
+      }
+    }
+    renderMath();
+  </script>
+</body>
+</html>
