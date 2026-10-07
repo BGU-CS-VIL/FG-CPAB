@@ -1,0 +1,636 @@
+:root {
+  --bg: #fbfaf8;
+  --surface: #ffffff;
+  --surface-2: #f2f0ec;
+  --ink: #1b1d24;
+  --ink-2: #4a4e5a;
+  --ink-3: #737885;
+  --line: #e2dfd8;
+  --accent: #2f5bd3;
+  --accent-ink: #ffffff;
+  --stage: #0d0f16;
+  --radius: 12px;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif: "Source Serif 4", Georgia, serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.6 var(--sans);
+}
+
+.topbar, main, .masthead, .footer {
+  width: min(1120px, 100% - 32px);
+  margin-inline: auto;
+}
+
+/* Top bar -------------------------------------------------------------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.logo {
+  display: block;
+  width: auto;
+}
+
+.logo-bgu { height: 44px; }
+.logo-neurips { height: 56px; }
+
+/* Masthead ------------------------------------------------------------- */
+
+.masthead {
+  padding: 44px 0 28px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0 auto 20px;
+  max-width: 900px;
+  font: 600 clamp(26px, 4.2vw, 42px)/1.18 var(--serif);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.authors {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 22px;
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.authors a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.authors a:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+
+.affiliations {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 22px;
+  color: var(--ink-3);
+  font-size: 14px;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.pill:hover { opacity: 0.85; }
+
+/* Sections ------------------------------------------------------------- */
+
+section { margin: 0 0 56px; }
+
+.prose {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+h2 {
+  margin: 0 0 14px;
+  font: 600 26px/1.25 var(--serif);
+}
+
+h3 {
+  margin: 0 0 10px;
+  font: 600 20px/1.3 var(--serif);
+}
+
+.prose p {
+  color: var(--ink-2);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.hero-title {
+  margin: 16px 0 18px;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.caption {
+  max-width: 760px;
+  margin: 16px auto 0;
+  color: var(--ink-2);
+  font-size: 15px;
+  text-align: center;
+}
+
+.prose a {
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.display-math {
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+/* Intro: what diffeomorphisms and CPAB are ---------------------------------- */
+
+.intro h3 { margin-top: 36px; }
+
+.intro img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.intro-cartoon {
+  max-width: 760px;
+  margin: 0 auto 28px;
+}
+
+.figure-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 760px;
+  margin: 8px auto 20px;
+}
+
+/* Column widths follow the aspect ratios (1 : 1.2) so both images share one height. */
+.figure-pair-cpab { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+
+.figure-pair figure { margin: 0; }
+
+.figure-pair figcaption, .benchmark figcaption {
+  margin-top: 8px;
+  color: var(--ink-3);
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+/* Gradient benchmark ------------------------------------------------------ */
+
+.benchmark { margin: 20px 0 24px; }
+
+.benchmark img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.benchmark figcaption { text-align: left; }
+
+.prose p.takeaway {
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+}
+
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  max-width: 900px;
+  margin-inline: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--line);
+  overflow: hidden;
+}
+
+.highlights div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 20px;
+  background: var(--surface);
+}
+
+.highlights strong {
+  font: 600 26px/1.1 var(--serif);
+  font-variant-numeric: tabular-nums;
+}
+
+.highlights span {
+  color: var(--ink-3);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.bibtex {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.footer {
+  padding: 24px 0 48px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Demos ---------------------------------------------------------------- */
+
+.demo {
+  display: grid;
+  gap: 20px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 4px);
+  background: var(--surface);
+}
+
+.demo-sculpt {
+  grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.demo-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--stage);
+}
+
+.demo-stage.square { aspect-ratio: 1; }
+
+/* The sculpt image is often light up to its edges: outline it so it stands off the card. */
+.demo-sculpt .demo-stage {
+  box-shadow: 0 1px 2px rgba(27, 29, 36, 0.08), 0 6px 18px rgba(27, 29, 36, 0.10);
+}
+
+.demo-sculpt .demo-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(27, 29, 36, 0.22);
+  pointer-events: none;
+}
+
+.demo-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+
+.demo-canvas:active { cursor: grabbing; }
+
+.demo-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(10, 12, 20, 0.72);
+  color: #fff;
+  font-size: 14px;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.4s;
+}
+
+.demo-hint.hidden { opacity: 0; }
+
+/* The note shown after the first warp of the test card. */
+.demo-toast {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  width: min(380px, calc(100% - 28px));
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: rgba(10, 12, 20, 0.86);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.45;
+  transform: translateX(-50%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  animation: toast-in 0.35s ease-out;
+}
+
+.demo-toast p { margin: 0 24px 10px 0; }
+
+.demo-toast-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo-toast .demo-toast-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-height: 0;
+  padding: 2px 8px;
+  border: 0;
+  background: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 18px;
+  line-height: 1;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 8px) rotate(-1.5deg); }
+  to { opacity: 1; transform: translateX(-50%); }
+}
+
+.demo-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.demo-controls {
+  display: grid;
+  gap: 12px;
+}
+
+.ctl {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.ctl-name { color: var(--ink-2); }
+
+.ctl output {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.ctl select {
+  grid-column: 2 / 4;
+}
+
+.ctl:has(:disabled) { opacity: 0.45; }
+.ctl :disabled { cursor: not-allowed; }
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.demo-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.demo-buttons .sep {
+  flex-basis: 100%;
+  height: 0;
+}
+
+button, select {
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font: 500 14px var(--sans);
+  cursor: pointer;
+}
+
+button:hover, select:hover { border-color: var(--ink-3); }
+
+button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px;
+  color: var(--ink-2);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.toggle input { accent-color: var(--accent); }
+
+.demo-stats {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.demo-fallback {
+  display: grid;
+  place-items: center;
+  min-height: 240px;
+}
+
+.demo-error {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  z-index: 10;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 12px 16px;
+  border: 1px solid #d9433b;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.demo-error strong { color: var(--ink); }
+
+.demo-error p {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.fallback-note {
+  max-width: 420px;
+  padding: 20px;
+  color: #d6d8df;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Registration demo ------------------------------------------------------ */
+
+.demo-register { grid-template-columns: 1fr; }
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.panel figure, figure.panel {
+  margin: 0;
+  min-width: 0;
+}
+
+.panel figcaption {
+  margin-top: 6px;
+  color: var(--ink-2);
+  font-size: 13px;
+  text-align: center;
+}
+
+.panel .demo-stage { aspect-ratio: 1; }
+
+.panels.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Line-color key in a caption: set --key on the element. */
+.key {
+  display: inline-block;
+  width: 14px;
+  height: 3px;
+  margin: 0 5px 0 2px;
+  border-radius: 2px;
+  background: var(--key);
+  vertical-align: middle;
+}
+
+.nowrap { white-space: nowrap; }
+
+.register-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.loss-plot {
+  display: block;
+  width: 100%;
+  height: 150px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.metrics div {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.metrics strong {
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.metrics span {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.metrics .formula { white-space: nowrap; }
+
+/* Responsive ------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .demo-sculpt { grid-template-columns: 1fr; }
+  .panels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .register-bottom { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .brand { gap: 8px; font-size: 12px; }
+  .logo-bgu { height: 34px; }
+  .logo-neurips { height: 44px; }
+  .masthead { padding-top: 32px; }
+  .demo { padding: 12px; }
+  .ctl { grid-template-columns: 96px minmax(0, 1fr) 52px; gap: 8px; }
+  .highlights { grid-template-columns: 1fr; }
+  .figure-pair, .figure-pair-cpab { grid-template-columns: 1fr; max-width: 400px; }
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .panels { gap: 6px; }
+  /* Three panels are too small to read on a phone: drop the least needed one and show the other two larger. */
+  .panels.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .panels .wide-only { display: none; }
+  .panel figcaption { font-size: 11px; line-height: 1.35; }
+}
